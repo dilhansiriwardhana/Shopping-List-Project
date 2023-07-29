@@ -18,7 +18,10 @@ function addItem(e) {
     li.appendChild(document.createTextNode(newItem));
 
     const button = createButton ('remove-item btn-link text-red')
-    console.log(button);
+    li.appendChild(button);
+
+    console.log(li);
+   
 
 
 }
@@ -26,15 +29,15 @@ function addItem(e) {
 function createButton (classes) {
     const button = document.createElement('button');
     button.className = classes;
-    const icon = createIcon(fa-solid fa-plus);
+    const icon = createIcon('fa-solid fa-plus');
     button.appendChild(icon);
     return button;
 
 }
 
 function createIcon(classes) {
-    const icon = document.createElement(i);
-    i.className = classes;
+    const icon = document.createElement('i');
+    icon.className = classes;
     return icon;
 }
 
