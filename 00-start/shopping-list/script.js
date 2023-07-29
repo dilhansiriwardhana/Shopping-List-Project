@@ -3,6 +3,8 @@ const itemInput = document.getElementById('item-input');
 const itemList = document.getElementById('item-list');
 const ClearBtn = document.getElementById('clear');
 const itemFilter = document.getElementById('filter');
+const formBtn = itemForm.querySelector('button');
+let isEditMode = false; 
 
 function displayItems() {
     const itemsFromStorage = getItemsFromStorage();
@@ -96,19 +98,64 @@ function getItemsFromStorage () {
 
 }
 
-function removeItem (e) {
-    if(e.target.parentElement.classList.contains('remove-item')) {
-        if (confirm('Are You Sure?'))  {
-            e.target.parentElement.parentElement.remove();
 
-            checkUi();
-        }   
+function onClickItem (e) {
+    if(e.target.parentElement.classList.contains('remove-item')) {
+        removeItem(e.target.parentElement.parentElement);
+
+        checkUi();
+    } else {
+        setItemToEdit(e.target);
     }
+}
+
+
+function setItemToEdit(item) {
+    isEditMode = true;
+
+    itemList.querySelectorAll('li')
+    .forEach((i) => i.classList.remove('edit-mode'))
+
+    item.classList.add('edit-mode');
+    formBtn.innerHTML = '<i class ="fa-solid fa-pen"></li> update Item';
+    formBtn.style.backgroundColor = '#228B22';
+    itemInput.value = item.textContent;
+
+
+
+}
+
+function removeItemFromStorage(item) {
+    let itemsFromStorage = getItemsFromStorage();
+
+    // Filter out item to be removed
+    itemsFromStorage = itemsFromStorage.filter((i) => i !== item);
+
+    //  Re set to localstorage
+    localStorage.setItem('items', JSON.stringify(itemsFromStorage));
+
+}
+
+
+
+function removeItem (item) {
+    if(confirm('Are you sure?')) {
+        // Remove item from DOM
+        item.remove();
+
+        // Remove item from storage
+        removeItemFromStorage(item.textContent);
+        checkUi();
+    }
+  
 }
 
 function clearItems() {
     while(itemList.firstChild) {
         itemList.removeChild(itemList.firstChild);
+
+    // Clear from Localstorage
+    localStorage.removeItem('items');
 
         checkUi();
 
@@ -153,7 +200,7 @@ function checkUi () {
 function init() {
     //  Event Listeners
 itemForm.addEventListener('submit' , onAddItemSubmit);
-itemList.addEventListener('click', removeItem);
+itemList.addEventListener('click', onClickItem);
 ClearBtn.addEventListener('click', clearItems);
 itemFilter.addEventListener('input', filterItems);
 document.addEventListener('DOMContentLoaded', displayItems);
