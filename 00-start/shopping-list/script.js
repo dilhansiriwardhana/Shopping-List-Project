@@ -2,6 +2,8 @@ const itemForm = document.getElementById('item-form');
 const itemInput = document.getElementById('item-input');
 const itemList = document.getElementById('item-list');
 const ClearBtn = document.getElementById('clear');
+const itemFilter = document.getElementById('filter');
+
 
 
 function addItem(e) {
@@ -22,7 +24,11 @@ function addItem(e) {
     const button = createButton ('remove-item btn-link text-red')
     li.appendChild(button);
 
+
+    //  Add li to the DOM
     itemList.appendChild(li);
+
+    checkUi();
 
     itemInput.value = '';
 
@@ -47,7 +53,12 @@ function createIcon(classes) {
 
 function removeItem (e) {
     if(e.target.parentElement.classList.contains('remove-item')) {
-        e.target.parentElement.parentElement.remove();
+        if (confirm('Are You Sure?'))  {
+            e.target.parentElement.parentElement.remove();
+
+            checkUi();
+        }
+        
     }
     
 
@@ -56,8 +67,44 @@ function removeItem (e) {
 function clearItems() {
     while(itemList.firstChild) {
         itemList.removeChild(itemList.firstChild);
-        
+
+        checkUi();
+
     }
+}
+
+function filterItems(e) {
+    const items = itemList.querySelectorAll('li');
+    const text = e.target.value.toLowerCase();
+
+    items.forEach(item => {
+        const itemName = item.firstChild.textContent.toLowerCase();
+
+        if (itemName.indexOf(text) != -1) {
+            item.style.display = 'flex';
+
+        } else {
+            item.style.display = 'none';
+        }
+
+    });
+}
+
+
+
+
+function checkUi () {
+    const items = itemList.querySelectorAll('li');
+    console.log(items);
+    if (items.length === 0) {
+        ClearBtn.style.display = 'none';
+        itemFilter.style.display = 'none';
+
+    } else {
+        ClearBtn.style.display = 'block';
+        itemFilter.style.display = 'block';
+    }
+
 }
 
 
@@ -66,6 +113,11 @@ function clearItems() {
 itemForm.addEventListener('submit' , addItem);
 itemList.addEventListener('click', removeItem);
 ClearBtn.addEventListener('click', clearItems);
+itemFilter.addEventListener('input', filterItems);
+
+
+
+checkUi();
 
 
 
